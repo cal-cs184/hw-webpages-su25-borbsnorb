@@ -27,8 +27,8 @@
 	</head>
 	<body>
 		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 2 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<h1>CS184/284A Summer 2025 Homework 2 Write-Up</h1>
+		<div style="text-align: center;">Names:Ryan Trac </div>
 
 		<br>
 
@@ -53,53 +53,112 @@
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain de Casteljau’s algorithm and how you implemented it in order to evaluate Bezier curves.</h4>
+			De Casteljau's algoritm is a recursive algorithm that given N control points or intermediate points, calculates and returns N-1 linearly inerpolated intermediate points
+			given a pararmeter t and a pair of sequential points (i and i+1). In my implemenation, I used a for loop to calculate the N-1 intermediate points and added each intermediate point
+			into my result array so that they could be plotted. This then continues until the number of points is 2 which means that we will only do one linear interpolation to
+			get our final point f(t) which is actually on the curve.
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+
+		<h2>Step by step evaluation of Bezier curve with 6 control points</h2>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="bzc_lvl1.png" width="400px"/>
+				  <figcaption>Level 1 evaluation</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="bzc_lvl2.png" width="400px"/>
+				  <figcaption>Level 2 evaluation</figcaption>
 				</td>
+				  <td style="text-align: center;">
+					  <img src="bzc_lvl3.png" width="400px"/>
+					  <figcaption>Level 3 evaluation</figcaption>
+				  </td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="bzc_lvl4.png" width="400px"/>
+				  <figcaption>Level 4 evaluation</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="bzc_lvl5.png" width="400px"/>
+				  <figcaption>Level 5 evaluation</figcaption>
 				</td>
+				  <td style="text-align: center;">
+					  <img src="bzc_lvl5_with_curve.png" width="400px"/>
+					  <figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+				  </td>
 			  </tr>
 			</table>
 		</div>
 
+			<h4>Bezier curve with different t parameter</h4>
+			<figure>
+				<img src="bzc_diff_t_param.png" width="400px"/>
+				<figcaption>A Bezier curve with a t parameter greater than 0.5</figcaption>
+			</figure>
+
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain how de Casteljau algorithm extends to Bezier surfaces and how you implemented it in order to evaluate Bezier surfaces.</h4>
+			We can extend the de Casteljau algorithm to Bezier surfaces by extending our view of Bezier curves to 3D. For example, on a 3D grid, we can make
+			many parallel Bezier curves and solve them at some parameter u. Then we can take all these f(u) points on our Bezier curves and interpolate that for
+			another parameter such as v. Doing that for all u and v, we get a Bezier surface! In my implementation, I compile all the points for each row and compute the
+			Bezier curve for that row at some parameter u. Then taking the final point f(u) from all the row Bezier curves, I use them as control points and compute
+			a Bezier curve at some parameter v.
+
+			<h4>Is anyone thirsty?.</h4>
+			<figure>
+				<img src="bezier_teapot.png" width="400px"/>
+				<figcaption>An image of a Bezier teapot</figcaption>
+			</figure>
 
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain how you implemented the area-weighted vertex normals.</h4>
+			To implement the area-weighted vertex normals, I recorded my initial vertex that my halfedge started at and then to find the normal each face,
+			I computed the cross product of two edges on the face. I computed these edges by first finding the vertices through the next pointers and
+			finding the vertices correspoding to the edges. Then after I computed the normal and pushed it back into my vector of Vector3Ds, I did halfedge-->next()->next()->twin()
+			to get to the next face and repeated the process until I processed all the normals corresponding to my starting vertex. Then I added each
+			vector within my vector list and then did a vector scalar division with the normalized vector to get my final area-weighted vertex normal.
+
+			<h4>Show screenshots of dae/teapot.dae (not .bez) comparing teapot shading with and without vertex normals. Use Q to toggle default flat shading and Phong shading.</h4>
+			<h4>Is anyone thirsty? *he said smoothly*</h4>
+			<figure>
+				<img src="part3_bezpot.png" width="400px"/>
+				<figcaption>An image of a Smooth Bezier teapot</figcaption>
+			</figure>
 
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.</h4>
+
+			<h4>Show screenshots of the teapot before and after some edge flips.</h4>
+
+			<h4>Write about your eventful debugging journey, if you have experienced one.</h4>
 
 		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.</h4>
+
+			<h4>Show screenshots of a mesh before and after some edge splits.</h4>
+
+			<h4>Show screenshots of a mesh before and after a combination of both edge splits and edge flips.</h4>
+
+			<h4>Write about your eventful debugging journey, if you have experienced one.</h4>
+
+			<h4>If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.</h4>
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.</h4>
+
+			<h4>Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?</h4>
+
+			<h4>Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.</h4>
+
+			<h4>If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.</h4>
 
 		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Additional Notes (please remove)</h2>
 		<ul>
