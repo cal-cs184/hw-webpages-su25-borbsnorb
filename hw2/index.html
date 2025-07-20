@@ -133,21 +133,72 @@
 
 		<h3>Part 4: Edge flip</h3>
 			<h4>Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.</h4>
+			To implement edge flipping, I simply started by drawing out a simple before and after of an edge flip operation. I then listed out every half edge, vertice,
+			edge, and face of the mesh to later reassign them after an edge flip operation. Then according to my post edge flip operation drawing, I assigned
+			every pointer correctly, making sure to be very thorough and reassign pointers even if they didn't change for clarity sake.
 
-			<h4>Show screenshots of the teapot before and after some edge flips.</h4>
+			<h4>A flipping bezier pot.</h4>
+			<figure>
+				<img src="edgeflip_bezpot.png" width="400px"/>
+				<figcaption>A Bezier pot with some edge flips performed onto it.</figcaption>
+			</figure>
+
 
 			<h4>Write about your eventful debugging journey, if you have experienced one.</h4>
+
+			Debugging was somewhat annoying as my first before and after drawings were not consistent as I was unsure how to rename each halfedge after
+			reassignment so I most likely made some winding order error or trivial mistake since my implementation was not flipping edges at all. I then looked
+			towards the debugging advice for help and found the Resources and Notes section to be a life saver, especially the guide on how to implement edge flips
+			as it was fairly straightforward and even gave the before and after drawings so I also drew them and followed it to a T.
 
 		<h3>Part 5: Edge split</h3>
 			<h4>Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.</h4>
+			Implementing edge split was fairly similar to implementing edge flip as once again, I recorded all the halfedges, faces, edges, and vertices before
+			the edge split operation happened. I also made use of a before and after drawing that I also once again followed to a T. I also created the necessary
+			new halfedges, midpoint, edges, and new faces in order to perform edge split. Then from there, it was a lot of careful pointer reassignment in accordance
+			to my after picture. It also helped to structure my code in terms of 1. Recording before structures, 2. Making new midpoint, 3. Making new halfedges and other structures,
+			and 4. Pointer Reassignment.
 
 			<h4>Show screenshots of a mesh before and after some edge splits.</h4>
 
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="part5_before.png" width="400px"/>
+							<figcaption>Before Teapot</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="part5_edgesplits.png" width="400px"/>
+							<figcaption>After Teapot with edge splits</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+
 			<h4>Show screenshots of a mesh before and after a combination of both edge splits and edge flips.</h4>
+
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="part5_before.png" width="400px"/>
+							<figcaption>Before Teapot</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="combo_edge_flip_split.png" width="400px"/>
+							<figcaption>After Teapot with various edge split and edge flips</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
 
 			<h4>Write about your eventful debugging journey, if you have experienced one.</h4>
 
-			<h4>If you have implemented support for boundary edges, show screenshots of your implementation properly handling split operations on boundary edges.</h4>
+			Thankfully, debugging was this part was pretty easy thanks to what I learned from implementing edge flips.
+
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
 			<h4>Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.</h4>
