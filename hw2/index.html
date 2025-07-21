@@ -47,7 +47,7 @@
 			<h4>Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</h4>
 
 			In this homework, I've learned how to create Bezier curves by linearly interpolating many times. This then extended to making many bezier curves in order to connect them
-			and form a bezier surface who's point is captured by the u parameter on the horizontal bezier curves and the v parameter on the vertical bezier curve. This first section overall
+			and form a bezier surface whose point is captured by the u parameter on the horizontal bezier curves and the v parameter on the vertical bezier curve. This first section overall
 			gives a good introduction to what we want to do which is creating smooth surfaces in both 2D and 3D. Section 2 gets more into modeling 3d objects and how to
 			manipulate them, make them smoother, and make them look better. To do this, we first start by implementing smooth shading by calculating area weighted normals at given
 			vertices. After, we got into the heart of this assignment which is dealing with the halfedge structures and how to manipulate them (flipping and splitting)
@@ -140,7 +140,8 @@
 			<h4>Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.</h4>
 			To implement edge flipping, I simply started by drawing out a simple before and after of an edge flip operation. I then listed out every half edge, vertice,
 			edge, and face of the mesh to later reassign them after an edge flip operation. Then according to my post edge flip operation drawing, I assigned
-			every pointer correctly, making sure to be very thorough and reassign pointers even if they didn't change for clarity sake.
+			every pointer correctly, making sure to be very thorough and reassign pointers even if they didn't change for clarity sake. This part was fairly
+			straightforward and I had no interesting implementations/debugging tricks.
 
 			<h4>A flipping bezier pot.</h4>
 			<figure>
@@ -210,9 +211,9 @@
 			To implement loop subdivision, I first updated the positions of old vertices, storing them in the newPosition variable and also made sure to mark
 			these vertices as old so I could later use it to flip edges. Secondly I iterated through all edges, computing the positions of the new vertices,
 			also storing them in newPosition and setting the edges as old. Next I split every old edge in the mesh, making sure not to
-			split any new edges created by splitting operations. I also update the position of the resulting midpoint vertex.
-			Next I flipped edges containing an old vertice connected to a new vertice. Finally, I updated all vertice positions to the
-			new positions I computed early and stroed in newPosition. I did not have any interesting implementaion or debugging tricks besides
+			split any new edges created by splitting operations. I also updated the position of the resulting midpoint vertex and made sure to mark
+			any edges or vertices as new within my edge spliting function. Next I flipped edges containing an old vertice connected to a new vertice. Finally, I updated all vertice positions to the
+			new positions I computed early and stored in newPosition. I did not have any interesting implementaion or debugging tricks besides
 			just being very careful and reading up on other issues people ran into on ED.
 
 
@@ -252,7 +253,7 @@
 
 			<h4>Can you reduce this effect by pre-splitting some edges?</h4>
 
-			Yes. As you can see below, the more edges are a split, the more resistant they are to the smoothing
+			Yes. As you can see below, the more edges are split, the more resistant they are to the smoothing
 			of loop subdivision. As a comparison I split one of the planes a lot, the other not so much, and left
 			everything else unsplit. We can then see the difference very easily as the plane with a lot of splits
 			retains its plane-like surface. The plane that was split less smoothened out but it is still a little
@@ -331,7 +332,8 @@
 			has all or almost all of its edges preprocessed. Comparing the pictures to the ones above we can see clear differences
 			in the rate that the cube smoothens out. These effects occur because the topology of the cube isn't symmetric. This means
 			that there may be rotational inconsistencies when performing loop subdivision that makes some edges protrude out. By
-			pre-processing the edges, we are making the topology consistent so there are no rotational inconsistencies.
+			pre-processing the edges, we are making the topology consistent so there are no rotational inconsistencies and therefore
+			less edge protrusions.
 
 			<h4>Loop subdivision on a preprocessed cube</h4>
 			<div style="display: flex; flex-direction: column; align-items: center;">
