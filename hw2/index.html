@@ -36,19 +36,24 @@
 
 		<br>
 		
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: (TODO) <a href="https://github.com/cal-cs184/hw2-meshedit-limes">cs184.eecs.berkeley.edu/sp25</a>
 
-		<figure>
-			<img src="teapot.png" alt="Teapot" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
 
 		<!--
 		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+			<h4>Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</h4>
+
+			In this homework, I've learned how to create Bezier curves by linearly interpolating many times. This then extended to making many bezier curves in order to connect them
+			and form a bezier surface who's point is captured by the u parameter on the horizontal bezier curves and the v parameter on the vertical bezier curve. This first section overall
+			gives a good introduction to what we want to do which is creating smooth surfaces in both 2D and 3D. Section 2 gets more into modeling 3d objects and how to
+			manipulate them, make them smoother, and make them look better. To do this, we first start by implementing smooth shading by calculating area weighted normals at given
+			vertices. After, we got into the heart of this assignment which is dealing with the halfedge structures and how to manipulate them (flipping and splitting)
+			in order to do loop subdivision which is a tool used to create smooth C2 continous surfaces. This assignment as a whole made me appreciate the power of loop subdivision
+			as it can create smooth and dramatically transform objects through seemingly easy opearations such as splititng and flipping edges. It has also made me wary and almost in awe of halfedges
+			as forgetting to link a pointer or linking the wrong pointer can have catastrophic conssequences when it comes to the smoothing out of objects.
 
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
@@ -202,25 +207,157 @@
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
 			<h4>Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.</h4>
+			To implement loop subdivision, I first updated the positions of old vertices, storing them in the newPosition variable and also made sure to mark
+			these vertices as old so I could later use it to flip edges. Secondly I iterated through all edges, computing the positions of the new vertices,
+			also storing them in newPosition and setting the edges as old. Next I split every old edge in the mesh, making sure not to
+			split any new edges created by splitting operations. I also update the position of the resulting midpoint vertex.
+			Next I flipped edges containing an old vertice connected to a new vertice. Finally, I updated all vertice positions to the
+			new positions I computed early and stroed in newPosition. I did not have any interesting implementaion or debugging tricks besides
+			just being very careful and reading up on other issues people ran into on ED.
 
-			<h4>Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?</h4>
 
-			<h4>Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.</h4>
+			<h4>Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision.
+				What happens to sharp corners and edges?</h4>
 
-			<h4>If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots.</h4>
+			It was very cool to see the torus mesh go from a sharp blocky ring to a very smooth and circular ring. After each
+			loop subdivision, the sharp corners and edges start to become more smooth and less pointy. We also see the hole
+			in the torus ring get a lot bigger, especially on the first subdivision iteration as the vertex positions are
+			being recalculated to smoothen the surface.
 
-		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
+			<h4>Pictured below is the progression of a Torus ring being smoothed out</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="torus_1.png" width="400px"/>
+							<figcaption>Torus mesh with no loop subdivision.</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="torus_2.png" width="400px"/>
+							<figcaption>Torus mesh with one level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="torus_3.png" width="400px"/>
+							<figcaption>Torus mesh with two levels of loop subdivision.</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="torus_4.png" width="400px"/>
+							<figcaption>Torus mesh with three level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
 
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+			<h4>Can you reduce this effect by pre-splitting some edges?</h4>
+
+			Yes. As you can see below, the more edges are a split, the more resistant they are to the smoothing
+			of loop subdivision. As a comparison I split one of the planes a lot, the other not so much, and left
+			everything else unsplit. We can then see the difference very easily as the plane with a lot of splits
+			retains its plane-like surface. The plane that was split less smoothened out but it is still a little
+			flat and of course the edges we didn't split fully smoothened out.
+
+			<h4>Pictured below is the progression of a Torus ring with presplit edges being smoothed out</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="presplit_torus1.png" width="400px"/>
+							<figcaption>Presplit Torus mesh with no loop subdivision.</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="presplit_torus2.png" width="400px"/>
+							<figcaption>Presplit Torus mesh with one level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="presplit_torus3.png" width="400px"/>
+							<figcaption>Presplit Torus mesh with two levels of loop subdivision.</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="presplit_torus4.png" width="400px"/>
+							<figcaption>Presplit Torus mesh with three level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+
+
+			<h4>Load dae/cube.dae. Perform several iterations of loop subdivision on the cube.
+				Notice that the cube becomes slightly asymmetric after repeated subdivisions.</h4>
+
+			<h4>Loop subdivision on a cube</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="cube.png" width="400px"/>
+							<figcaption>Cube with no loop subdivision</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="cube1.png" width="400px"/>
+							<figcaption>Cube with one level of loop subdivision</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="cube2.png" width="400px"/>
+							<figcaption>Cube with two levels of loop subdivision</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="cube3.png" width="400px"/>
+							<figcaption>Cube with three levels of loop subdivision</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="cube4.png" width="400px"/>
+							<figcaption>Cube with four levels of loop subdivision</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="cube5.png" width="400px"/>
+							<figcaption>Cube with five levels of loop subdivision</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4>Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically?
+			Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.</h4>
+
+			Yes you can pre-process the cube so it becomes more symmetric. In all of the images below, the cube before loop subdivision
+			has all or almost all of its edges preprocessed. Comparing the pictures to the ones above we can see clear differences
+			in the rate that the cube smoothens out. These effects occur because the topology of the cube isn't symmetric. This means
+			that there may be rotational inconsistencies when performing loop subdivision that makes some edges protrude out. By
+			pre-processing the edges, we are making the topology consistent so there are no rotational inconsistencies. 
+
+			<h4>Loop subdivision on a preprocessed cube</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="preprocess_2.png" width="400px"/>
+							<figcaption>Preprocessed cube mesh with one level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="preprocess_3.png" width="400px"/>
+							<figcaption>Preprocessed cube mesh with two levels of loop subdivision.</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="preprocess_4.png" width="400px"/>
+							<figcaption>Preprocessed cube mesh with three level of loop subdivision.</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+
+
 		</div>
 	</body>
 </html>
