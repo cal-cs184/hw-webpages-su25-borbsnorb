@@ -27,8 +27,8 @@
 	</head>
 	<body>
 		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<h1>CS184/284A Summer 2025 Homework 3 Write-Up</h1>
+		<div style="text-align: center;">Names: Ryan Trac and Nandini Velinedi </div>
 
 		<br>
 
@@ -48,7 +48,26 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+			<h4>Walk through the ray generation and primitive intersection parts of the rendering pipeline.</h4>
+			To implement ray generation we first had to translate the normalized image coordinates into Camera space. To do this, we first translated every point
+			by (-.5,-.5) as the midpoint of the image space (0.5,0,5) corresponded to (0,0,-1) in camera space. We then realized the bottom left and top right corners
+			were scaled by (tan(hfov/2),tan(vfov/2)) so we also scaled the given (x,y) coordinate by this scalar as well. Another important thing to note is that to get
+			(0,0) and (1,1) to map to (-tan(hfov/2),-tan(vfov/2), -1) and (tan(hfov/2),tan(vfov/2), -1) after translating by -0.5, we would have to multiply by 2 since
+			after translating the normalizlied points by -0.5 we would have (-0.5, -0.5) and (0.5,0.5) so to map the points correctly we need to scale them back up
+			to (-1,-1) and (1,1) in order to get the correct mapping. From there we just normalize the direction vector and we get our ray! (STILL NEED TO TALK ABOUT
+			PRIMITIVE INTERSECTIONS)
+
+			<h4>Explain the triangle intersection algorithm you implemented in your own words.</h4>
+			To implement our triangle intersection algorithm, we made use of the Möller Trumbore Algorithm which uses barycentric coordinates
+			in order to figure out if our ray intersects a triangle. The algorithm is also useful as it will tell us at what t value the ray
+			intersects the triangle if it even does. Similarly to HW1, we can see if the barycentric weights are all equal or above 1 to figure
+			out if the ray intersects the triangle. And of course we also need to make sure our t value is within max_t and and min_t to see if
+			the intersection is even visible to the camera. Finally if we get a valid intersection, we update max_t to make sure later and further
+			intersections are ignored, compute the intersection normal by interpolating the vertex normals with barycentric weights, and updating
+			all the other isect struct members.
+
+			<h4>Show images with normal shading for a few small .dae files.</h4>
 
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
