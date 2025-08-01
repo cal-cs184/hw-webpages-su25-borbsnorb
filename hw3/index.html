@@ -55,8 +55,9 @@
 			were scaled by (tan(hfov/2),tan(vfov/2)) so we also scaled the given (x,y) coordinate by this scalar as well. Another important thing to note is that to get
 			(0,0) and (1,1) to map to (-tan(hfov/2),-tan(vfov/2), -1) and (tan(hfov/2),tan(vfov/2), -1) after translating by -0.5, we would have to multiply by 2 since
 			after translating the normalizlied points by -0.5 we would have (-0.5, -0.5) and (0.5,0.5) so to map the points correctly we need to scale them back up
-			to (-1,-1) and (1,1) in order to get the correct mapping. From there we just normalize the direction vector and we get our ray! (STILL NEED TO TALK ABOUT
-			PRIMITIVE INTERSECTIONS)
+			to (-1,-1) and (1,1) in order to get the correct mapping. From there we just normalize the direction vector and we get our ray! As for the primitives,
+			the intersection functions are called from the primitives (triangles or spheres) themselves so once we find out that the ray intersects the primitive,
+			we can simply set the primitive attribute of the intersect struct to be "this".
 
 			<h4>Explain the triangle intersection algorithm you implemented in your own words.</h4>
 			To implement our triangle intersection algorithm, we made use of the Möller Trumbore Algorithm which uses barycentric coordinates
@@ -68,6 +69,23 @@
 			all the other isect struct members.
 
 			<h4>Show images with normal shading for a few small .dae files.</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBspheres_lambertian_screenshot_7-26_20-17-9.png" width="400px"/>
+							<figcaption>Image of CBspheres lambertian</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBgems_screenshot_7-26_20-24-25.png" width="400px"/>
+							<figcaption>Image of CBgems</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+
 
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -96,10 +114,114 @@
 		</div>
 		
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
 
 		<h2>Part 3: Direct Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+			<h4>Our implementation of Uniform direct lighting</h4>
+			To implement the uniform direct lighting, we sample the hemisphere uniformly to get the incoming light vector direction. I will be reffering to
+			this vector as the sample_vector. We then send a ray from our original hit point (hit_p) and setting its direction to be o2w * sample_vector. We also update its min_t to be EPS_F so
+			intersections at the origin aren't considered. We convert the sample_vector to world space as we want
+			the vector to be in object space but rather in world space to see if the ray intersects a light source. From here, we see if this ray intersects the bvh if it does,
+			we compute how much this sample contributes to the Monte Carlo estimator. We calcualte the bsdf on the w_out and w_in vectors which are
+			both in object space, the pdf is given by the standard uniform hemisphere pdf which is 1.0 / 2 * PI, and we compute the cos angle by computing the dot
+			product of the normal and sample_vector. We then repeat this process num_sample times and then normalize the final sum by the number of samples we took
+			to get the final estimation of light.
+
+
+			<h4>Rendered images with Uniform direct lighting</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBbunny_H_64_32.png" width="400px" style="max-width: 100%; height: auto;"/>
+							<figcaption>Image of CBbunny with Uniform direct lighting</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_H_16_8.png" width="400px" style="max-width: 100%; height: auto;"/>
+							<figcaption>Image of CBunny with Uniform direct lighting but less rays casted</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4>Our implementation of Importance direct lighting</h4>
+			The implementation of importance direct lighting is similar to the uniform direct lighting with a few
+			key differences. For one, we let sample_f function do most of the work as it will give us a sample_vector,
+			the distance to light which helps us upper bound the ray we send and also gives us the distribution of the
+			sampled vector as it is no longer just uniform over a hemisphere. Another key thing is that we have to sample
+			ns_area_light times per light vector in the scene unless its a point light in which we just sample it once as
+			per the spec's suggestion. The final key difference is that instead of checking for intersections, we check if
+			the ray doesn't have an intersection and we add this to our estimator as the light directly hits the target hit
+			point.
+
+
+			<h4>Rendered images with Importance direct lighting</h4>
+
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bunny_64_32.png" width="400px"/>
+							<figcaption>Image of CBbunny with Importance direct lighting</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="dragon_64_32.png" width="400px"/>
+							<figcaption>Image of a Dragon with Importance direct lighting</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+			<p>Rendering of CBbunny with 1, 4, 16, and 64 light rays and 1 sample per pixel</p>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bunny_1_1.png" width="400px"/>
+							<figcaption>1 Light ray</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bunny_4_1.png" width="400px"/>
+							<figcaption>4 Light rays</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="bunny_16_1.png" width="400px"/>
+							<figcaption>16 Light rays</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bunny_64_1.png" width="400px"/>
+							<figcaption>64 Light rays</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4>Noise and Shadow Comparison </h4>
+
+			Above, we can see clear difference in the amount of noise in the shadows which increases
+			when less light rays are sent. When 1 light ray is sent, we are majorly undersampling the area
+			of light as one light ray cannot capture the true lighting of the area. Thus we get a lot of noise
+			especially in the shadow of the rabbit breast as most of the rays not being accounted for as they are intersecting
+			an object and thus not being added to the light estimate. We also see a very noticable amount of noise
+			in the rabbit ears which is also caused by undersampling. Then as we increase to 4 light rays, the amount of noise
+			in the ear and breast shadow starts to decrease yet they are still noticable. Upping it to 16, we now see
+			that the noise on the rabbit body is essentialy gone and the shadows become even less noisy. Finally when we
+			send 64 light rays, we have the best outcome of soft shadows with essentially no noise.
+
+			<h4>Comparison of results between uniform hemisphere sampling and lighting sampling</h4>
+
+			The visual differences between the two are quite apparent with lighting sampling being the clear winner.
+			The uniform hemisphere sampling produces a much more grainy and noisy image. This is most apparent on all the
+			walls which look very rough and grainy. On the other hand, lighting sampling produces very smooth walls which
+			in turn make the shadows softer as they aren't being mixed with the grainy walls and floors. And in terms of runtime,
+			lighting sampling has uniform sampling beat as on our code lighting runs about 20 seconds faster. This is due to the
+			optimizations we added which included skipping lights that the ray is behind and only sampling point lights one time.
+
+			
 
 		<h2>Part 4: Global Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
