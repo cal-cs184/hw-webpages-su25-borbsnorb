@@ -116,18 +116,33 @@
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
 
 			<h4>Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.</h4>
+			Our BVH construction algorithm builds a binary tree structure recursively using a top-down approach that subdivides primitives based on spatial coherence
+			 to accelerate ray-primitive intersection tests. The algorithm begins by computing a bounding box that encompasses all primitives in the current node, 
+			 then determines whether to create a leaf node or continue subdivision based on whether the number of primitives exceeds the maximum leaf size threshold. 
+			 For internal nodes, we employ a centroid-based splitting heuristic that selects the splitting axis by identifying the dimension with the largest extent in 
+			 the bounding box, ensuring we split along the direction with the greatest spatial spread. The splitting point is calculated as the average of all 
+			 primitive centroids along the chosen axis, providing a balanced partition that tends to create roughly equal-sized subtrees while maintaining spatial locality. 
+			 We use the standard library's partition function to efficiently rearrange primitives based on whether their centroid falls below or above the splitting point, 
+			 creating two disjoint sets for the left and right child nodes. To handle degenerate cases where all primitives have the same centroid or the partition results 
+			 in empty subtrees, we implement a fallback mechanism that splits the primitive list at the midpoint, ensuring the algorithm always makes progress and terminates. 
+			 The recursive construction continues until all leaf nodes contain fewer primitives than the maximum leaf size, creating a balanced tree structure that enables 
+			 efficient ray traversal by allowing early termination when rays miss bounding boxes and providing logarithmic search complexity for intersection queries.
 
 			<h4>Images that can only be rendered with BVH acceleration.</h4>
 			<div style="display: flex; flex-direction: column; align-items: center;">
 				<table style="width: 100%; text-align: center; border-collapse: collapse;">
 					<tr>
 						<td style="text-align: center;">
-							<img src="CBspheres_lambertian_screenshot_7-26_20-17-9.png" width="400px"/>
-							<figcaption>Image of CBspheres lambertian</figcaption>
+							<img src="cow.png" width="400px"/>
+							<figcaption></figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="CBgems_screenshot_7-26_20-24-25.png" width="400px"/>
-							<figcaption>Image of CBgems</figcaption>
+							<img src="maxplanck.png" width="400px"/>
+							<figcaption></figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBlucy.png" width="400px"/>
+							<figcaption></figcaption>
 						</td>
 					</tr>
 				</table>
@@ -135,6 +150,11 @@
 
 
 			<h4>Comparison of rendering times on complex geometries with and without BVH acceleration.</h4>
+			We tested three scenes with different amounts of geometry: the cow (5856 triangles), Max Planck (50801), and Lucy (133784). With BVH acceleration, rendering stayed fast 
+			even for the more complex models because each ray only had to check about 6 to 7 shapes on average. Without BVH, each ray would have to check every single triangle, 
+			which would be way slower. Building the BVH took almost no time (a few milliseconds) and rendering speeds stayed high (around 3.8 to 5.4 million rays per second). 
+			This shows that BVH makes a huge difference in keeping things fast, especially for detailed scenes. 
+
 
 
 		<h2>Part 3: Direct Illumination</h2>
@@ -247,21 +267,47 @@
 		<h2>Part 4: Global Illumination</h2>
 
 			<h4>Walk through your implementation of the indirect lighting function.</h4>
+			Our indirect lighting implementation is built around the at_least_one_bounce_radiance function, which computes global illumination 
+			through recursive Monte Carlo path tracing. The function begins by establishing a local coordinate system at each surface intersection 
+			point with the normal aligned to the Z-axis, then computes direct lighting contributions using either hemisphere sampling or 
+			importance sampling from light sources. For indirect lighting, we sample the material's BSDF to determine the next ray direction, 
+			accounting for the surface's reflectance properties and providing importance sampling based on material characteristics. To prevent 
+			infinite recursion while maintaining mathematical correctness, we implement Russian Roulette termination with a 35% probability of 
+			stopping at each bounce. The recursive structure traces rays through the scene, accumulating light contributions from each surface 
+			interaction, where each contribution is properly weighted by the BSDF value, the cosine of the angle between the surface normal and 
+			incident direction, and the inverse of the sampling probability density function. This approach naturally handles complex light 
+			transport phenomena including color bleeding, soft shadows, and ambient occlusion by following the rendering equation through 
+			Monte Carlo integration. The implementation supports configurable maximum ray depths and includes both accumulative and 
+			individual bounce modes, while using epsilon offsets to prevent self-intersection artifacts. The indirect lighting seamlessly integrates 
+			with our direct lighting computation and zero-bounce emission handling, creating a complete global illumination pipeline that produces 
+			physically accurate lighting through multiple surface interactions.
+
+			
 
 			<h4>Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.</h4>
-
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBbunny.png" width="400px"/>
+							<figcaption>Global Illumination</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
 			<h4>Comparison of only direct vs only indirect illumination at 1024 samples per pixel</h4>
 
 			<div style="display: flex; flex-direction: column; align-items: center;">
 				<table style="width: 100%; text-align: center; border-collapse: collapse;">
 					<tr>
 						<td style="text-align: center;">
-							<img src="bunny_64_32.png" width="400px"/>
-							<figcaption>Image of CBbunny with Importance direct lighting</figcaption>
+							<img src="spheres_direct.png" width="400px"/>
+							<figcaption>Direct Illumination</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="dragon_64_32.png" width="400px"/>
-							<figcaption>Image of a Dragon with Importance direct lighting</figcaption>
+							<img src="spheres_indirect.png" width="400px"/>
+							<figcaption>Indirect Illumination</figcaption>
 						</td>
 					</tr>
 				</table>
@@ -378,7 +424,44 @@
 			</div>
 
 			<h4>Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.</h4>
-
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s1.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 1</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s2.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 2</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s4.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 4</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s8.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 8</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s16.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 16</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s64.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 64</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBbunny_m2_l4_s1024.png" width="400px"/>
+							<figcaption>Sample-per-pixel rate is 1024</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
 
 
 
