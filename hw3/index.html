@@ -47,6 +47,21 @@
 		<h2>Overview</h2>
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
+			In this homework, we built a full Monte Carlo path tracer from the ground up, going through five main parts to achieve realistic global illumination.
+			In Part 1, we started with ray generation and scene intersection, setting up the basic pipeline to shoot rays and check for hits.
+			Then in Part 2, we added a Bounding Volume Hierarchy (BVH), which made things way faster by narrowing down the number of intersection
+			tests using spatial subdivisions instead of checking eery single shape in the scene. Part 3 focused on direct lighting using both hemisphere
+			and importance sampling to better estimate how light hits surfaces. In Part 4, we extended this to full global illumination with recursive bounces,
+			which let us simulate effects like soft shadows, color bleeding, and indirect lighting. Finally, Part 5 introduced adaptive sampling, which made
+			rendering more efficient by putting more effort into pixels that hadn’t converged yet.
+
+			Building this path tracer helped us understand how light actually behaves and how we can simulate that code.
+			It was especially interesting to see how recursive ray tracing naturally models real light transport.
+			Each bounce adds more information and importance sampling and Russian Roulette after image quality and efficiency.
+			The BVH implementation was a game changer. Without it, every ray would have to check again model with over 130000 triangles,
+			we only needed about 6 to 7 intersection checks per ray, and rendering speeds stayed between 3.8 and 5.4 million rays per second.
+			It was cool to see how algorithms choices like using BVH can make rendering practical even for really detailed scenes.
+
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
 
 			<h4>Walk through the ray generation and primitive intersection parts of the rendering pipeline.</h4>
@@ -264,25 +279,25 @@
 
 
 
-		<h2>Part 4: Global Illumination</h2>
+			<h2>Part 4: Global Illumination</h2>
 
 			<h4>Walk through your implementation of the indirect lighting function.</h4>
-			Our indirect lighting implementation is built around the at_least_one_bounce_radiance function, which computes global illumination 
-			through recursive Monte Carlo path tracing. The function begins by establishing a local coordinate system at each surface intersection 
-			point with the normal aligned to the Z-axis, then computes direct lighting contributions using either hemisphere sampling or 
-			importance sampling from light sources. For indirect lighting, we sample the material's BSDF to determine the next ray direction, 
-			accounting for the surface's reflectance properties and providing importance sampling based on material characteristics. To prevent 
-			infinite recursion while maintaining mathematical correctness, we implement Russian Roulette termination with a 35% probability of 
-			stopping at each bounce. The recursive structure traces rays through the scene, accumulating light contributions from each surface 
-			interaction, where each contribution is properly weighted by the BSDF value, the cosine of the angle between the surface normal and 
-			incident direction, and the inverse of the sampling probability density function. This approach naturally handles complex light 
-			transport phenomena including color bleeding, soft shadows, and ambient occlusion by following the rendering equation through 
-			Monte Carlo integration. The implementation supports configurable maximum ray depths and includes both accumulative and 
-			individual bounce modes, while using epsilon offsets to prevent self-intersection artifacts. The indirect lighting seamlessly integrates 
-			with our direct lighting computation and zero-bounce emission handling, creating a complete global illumination pipeline that produces 
+			Our indirect lighting implementation is built around the at_least_one_bounce_radiance function, which computes global illumination
+			through recursive Monte Carlo path tracing. The function begins by establishing a local coordinate system at each surface intersection
+			point with the normal aligned to the Z-axis, then computes direct lighting contributions using either hemisphere sampling or
+			importance sampling from light sources. For indirect lighting, we sample the material's BSDF to determine the next ray direction,
+			accounting for the surface's reflectance properties and providing importance sampling based on material characteristics. To prevent
+			infinite recursion while maintaining mathematical correctness, we implement Russian Roulette termination with a 35% probability of
+			stopping at each bounce. The recursive structure traces rays through the scene, accumulating light contributions from each surface
+			interaction, where each contribution is properly weighted by the BSDF value, the cosine of the angle between the surface normal and
+			incident direction, and the inverse of the sampling probability density function. This approach naturally handles complex light
+			transport phenomena including color bleeding, soft shadows, and ambient occlusion by following the rendering equation through
+			Monte Carlo integration. The implementation supports configurable maximum ray depths and includes both accumulative and
+			individual bounce modes, while using epsilon offsets to prevent self-intersection artifacts. The indirect lighting seamlessly integrates
+			with our direct lighting computation and zero-bounce emission handling, creating a complete global illumination pipeline that produces
 			physically accurate lighting through multiple surface interactions.
 
-			
+
 
 			<h4>Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.</h4>
 			<div style="display: flex; flex-direction: column; align-items: center;">
@@ -290,12 +305,18 @@
 					<tr>
 						<td style="text-align: center;">
 							<img src="CBbunny.png" width="400px"/>
-							<figcaption>Global Illumination</figcaption>
+							<figcaption>Global Illumination of CBbunny</figcaption>
 						</td>
+
+						<td style="text-align: center;">
+							<img src="Wall_e_1024.png" width="400px"/>
+							<figcaption>Global Illumination of Wall-e!! (this took forever to render)</figcaption>
+						</td>
+
 					</tr>
 				</table>
 			</div>
-			
+
 			<h4>Comparison of only direct vs only indirect illumination at 1024 samples per pixel</h4>
 
 			<div style="display: flex; flex-direction: column; align-items: center;">
@@ -314,37 +335,35 @@
 			</div>
 
 
-
-
 			<h4>Bunny with accumulated light and varying max depth</h4>
 			<div style="display: flex; flex-direction: column; align-items: center;">
 				<table style="width: 100%; text-align: center; border-collapse: collapse;">
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl1.png" width="400px"/>
-							<figcaption>Level 1 evaluation</figcaption>
+							<img src="CBbunny_m0_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 0 </figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl2.png" width="400px"/>
-							<figcaption>Level 2 evaluation</figcaption>
+							<img src="CBbunny_m1_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 1</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl3.png" width="400px"/>
-							<figcaption>Level 3 evaluation</figcaption>
+							<img src="CBbunny_m2_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 2</figcaption>
 						</td>
 					</tr>
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl4.png" width="400px"/>
-							<figcaption>Level 4 evaluation</figcaption>
+							<img src="CBbunny_m3_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 3</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl5.png" width="400px"/>
-							<figcaption>Level 5 evaluation</figcaption>
+							<img src="CBbunny_m4_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 4</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl5_with_curve.png" width="400px"/>
-							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+							<img src="CBbunny_m5_1024.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 100</figcaption>
 						</td>
 					</tr>
 				</table>
@@ -356,36 +375,48 @@
 				<table style="width: 100%; text-align: center; border-collapse: collapse;">
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl1.png" width="400px"/>
+							<img src="CBbunny_NOACCUM_m0.png" width="400px"/>
+							<figcaption>Level 0 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_NOACCUM_m1.png" width="400px"/>
 							<figcaption>Level 1 evaluation</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl2.png" width="400px"/>
+							<img src="CBbunny_NOACCUM_m2.png" width="400px"/>
 							<figcaption>Level 2 evaluation</figcaption>
-						</td>
-						<td style="text-align: center;">
-							<img src="bzc_lvl3.png" width="400px"/>
-							<figcaption>Level 3 evaluation</figcaption>
 						</td>
 					</tr>
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl4.png" width="400px"/>
+							<img src="CBbunny_NOACCUM_m3.png" width="400px"/>
+							<figcaption>Level 3 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBbunny_NOACCUM_m4.png" width="400px"/>
 							<figcaption>Level 4 evaluation</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl5.png" width="400px"/>
-							<figcaption>Level 5 evaluation</figcaption>
-						</td>
-						<td style="text-align: center;">
-							<img src="bzc_lvl5_with_curve.png" width="400px"/>
+							<img src="CBbunny_NOACCUM_m5.png" width="400px"/>
 							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
 						</td>
 					</tr>
 				</table>
 			</div>
 
-			<h4>Comparison of rendered views of accumulated and unaccumulated bounces for CBbunny.dae at 1024 samples per pixel</h4>
+			<h4>Comparison and anaylsis of accumulated and unaccumulated bounces for CBbunny.dae</h4>
+
+			In the second bounce of light, we see light reflecting off the walls and floors to illuminate
+			the bottom side of the bunny that isn't directly exposed to the light. This can be seen as the
+			bottom half of the bunny is now much more illuminated compared to the top half since light already
+			reached most of the top half in the first bounce. This then brings us to the 3rd bounce which makes
+			shadows much more softer as we are essentially upsampling by tracing shadow rays. When you compare
+			reflectance lighting and global illumination to rasterization, it does a much better job at capturing
+			realistic lighting and shadows since rasterizing doesn't capture reflecting but only tries to calculate
+			it with Blinn-Phong. In addition, we can also compare the accumulated and unaccumulated images as they
+			are closely related. Obviously we can add up successive bounces in the unaccumulated images to get the
+			accumulated images but its also interesting to see the step by step lighting increase that each bounce
+			adds. The less bright the additive bounce is the less of a difference it makes in the accumulation image.
 
 
 
@@ -394,30 +425,30 @@
 				<table style="width: 100%; text-align: center; border-collapse: collapse;">
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl1.png" width="400px"/>
-							<figcaption>Level 1 evaluation</figcaption>
+							<img src="CBbunny_NOACCUM_m0.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 0 </figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl2.png" width="400px"/>
-							<figcaption>Level 2 evaluation</figcaption>
+							<img src="CBbunny_accumulated_RR_M1.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 1</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl3.png" width="400px"/>
-							<figcaption>Level 3 evaluation</figcaption>
+							<img src="CBbunny_accumulated_RR_M2.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 2</figcaption>
 						</td>
 					</tr>
 					<tr>
 						<td style="text-align: center;">
-							<img src="bzc_lvl4.png" width="400px"/>
-							<figcaption>Level 4 evaluation</figcaption>
+							<img src="CBbunny_accumulated_RR_M3.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 3</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl5.png" width="400px"/>
-							<figcaption>Level 5 evaluation</figcaption>
+							<img src="CBbunny_accumulated_RR_M4.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 4</figcaption>
 						</td>
 						<td style="text-align: center;">
-							<img src="bzc_lvl5_with_curve.png" width="400px"/>
-							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+							<img src="CBbunny_accumulated_RR_M100.png" width="400px"/>
+							<figcaption>CBunny with accumulation and max depth of 100</figcaption>
 						</td>
 					</tr>
 				</table>
@@ -465,7 +496,9 @@
 
 
 
-		<h2>Part 5: Adaptive Sampling</h2>
+
+
+			<h2>Part 5: Adaptive Sampling</h2>
 			<h4>Explain adaptive sampling. Walk through your implementation of the adaptive sampling.</h4>
 
 			<h4>Comparison of Two scenes with 2048 samples per pixel</h4>
