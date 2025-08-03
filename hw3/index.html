@@ -115,6 +115,27 @@
 		
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
 
+			<h4>Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.</h4>
+
+			<h4>Images that can only be rendered with BVH acceleration.</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="CBspheres_lambertian_screenshot_7-26_20-17-9.png" width="400px"/>
+							<figcaption>Image of CBspheres lambertian</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="CBgems_screenshot_7-26_20-24-25.png" width="400px"/>
+							<figcaption>Image of CBgems</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+			<h4>Comparison of rendering times on complex geometries with and without BVH acceleration.</h4>
+
 
 		<h2>Part 3: Direct Illumination</h2>
 
@@ -221,27 +242,168 @@
 			lighting sampling has uniform sampling beat as on our code lighting runs about 20 seconds faster. This is due to the
 			optimizations we added which included skipping lights that the ray is behind and only sampling point lights one time.
 
-			
+
 
 		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+			<h4>Walk through your implementation of the indirect lighting function.</h4>
+
+			<h4>Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.</h4>
+
+			<h4>Comparison of only direct vs only indirect illumination at 1024 samples per pixel</h4>
+
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bunny_64_32.png" width="400px"/>
+							<figcaption>Image of CBbunny with Importance direct lighting</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="dragon_64_32.png" width="400px"/>
+							<figcaption>Image of a Dragon with Importance direct lighting</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+
+
+			<h4>Bunny with accumulated light and varying max depth</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl1.png" width="400px"/>
+							<figcaption>Level 1 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl2.png" width="400px"/>
+							<figcaption>Level 2 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl3.png" width="400px"/>
+							<figcaption>Level 3 evaluation</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl4.png" width="400px"/>
+							<figcaption>Level 4 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5.png" width="400px"/>
+							<figcaption>Level 5 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5_with_curve.png" width="400px"/>
+							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
+			<h4>Bunny with unaccumulated light and varying max depth at 1024 samples per pixel</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl1.png" width="400px"/>
+							<figcaption>Level 1 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl2.png" width="400px"/>
+							<figcaption>Level 2 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl3.png" width="400px"/>
+							<figcaption>Level 3 evaluation</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl4.png" width="400px"/>
+							<figcaption>Level 4 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5.png" width="400px"/>
+							<figcaption>Level 5 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5_with_curve.png" width="400px"/>
+							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4>Comparison of rendered views of accumulated and unaccumulated bounces for CBbunny.dae at 1024 samples per pixel</h4>
+
+
+
+			<h4>Bunny with Russian roulette rendering and varying max depth at 1024 samples per pixel</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl1.png" width="400px"/>
+							<figcaption>Level 1 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl2.png" width="400px"/>
+							<figcaption>Level 2 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl3.png" width="400px"/>
+							<figcaption>Level 3 evaluation</figcaption>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="bzc_lvl4.png" width="400px"/>
+							<figcaption>Level 4 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5.png" width="400px"/>
+							<figcaption>Level 5 evaluation</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="bzc_lvl5_with_curve.png" width="400px"/>
+							<figcaption>Level 5 evaluation with Bezier Curve</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4>Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.</h4>
+
+
+
+
+
 
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			<h4>Explain adaptive sampling. Walk through your implementation of the adaptive sampling.</h4>
 
-		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+			<h4>Comparison of Two scenes with 2048 samples per pixel</h4>
+			<div style="display: flex; flex-direction: column; align-items: center;">
+				<table style="width: 100%; text-align: center; border-collapse: collapse;">
+					<tr>
+						<td style="text-align: center;">
+							<img src="bunny_64_32.png" width="400px"/>
+							<figcaption>Image of CBbunny with Importance direct lighting</figcaption>
+						</td>
+						<td style="text-align: center;">
+							<img src="dragon_64_32.png" width="400px"/>
+							<figcaption>Image of a Dragon with Importance direct lighting</figcaption>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+
 		</div>
 	</body>
 </html>
